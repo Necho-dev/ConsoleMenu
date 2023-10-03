@@ -5,5 +5,5 @@ set(CMAKE_CXX_STANDARD 11)
 
 file(GLOB_RECURSE HEAD_FILES CONFIGURE_DEPENDS "lib/*.h")
 file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS "lib/*.cpp")
-add_executable(ConsoleAction main.cpp ${HEAD_FILES} ${SOURCE_FILES}
+add_executable(ConsoleMenu main.cpp ${HEAD_FILES} ${SOURCE_FILES}
         ConsoleGUI.h)
