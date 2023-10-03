@@ -1,0 +1,10 @@
+# ninja log v5
+10	2668	7180567231707607	CMakeFiles/ConsoleAction.dir/lib/Utils.cpp.obj	45cddf580c9c7111
+6	2461	7180581709309029	CMakeFiles/ConsoleAction.dir/main.cpp.obj	5736270104714081
+2495	2820	7180612003347360	ConsoleAction.exe	a370440a1f006ebb
+6	2495	7180612000127408	CMakeFiles/ConsoleAction.dir/lib/Logs.cpp.obj	40c658eae0511f6e
+2	40	0	D:/DevelopPros/CLionProjects/ConsoleMenu/cmake-build-debug/CMakeFiles/cmake.verify_globs	279794027b8e6c04
+15	2544	7180614063535726	CMakeFiles/ConsoleAction.dir/lib/Utils.cpp.obj	b8b093ba0a844e01
+5	2546	7180614063545719	CMakeFiles/ConsoleAction.dir/main.cpp.obj	1a6c38d725c13490
+10	2558	7180614063663444	CMakeFiles/ConsoleAction.dir/lib/Logs.cpp.obj	53116babc0741b0f
+2559	2906	7180614067121563	ConsoleAction.exe	a370440a1f006ebb
