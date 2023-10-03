@@ -256,6 +256,7 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
         echo(Utils::ToString("[", i, "] ", choices[i]), FOREGROUND::WHITE);
     }
 
+    // TODO 鼠标选择菜单重构
     bool flag = false;
     while (!flag) {
         INPUT_RECORD InputRecord;   // 输入事件
