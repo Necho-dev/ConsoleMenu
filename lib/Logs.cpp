@@ -234,6 +234,7 @@ MOUSE_EVENT_RECORD waitMouseEvent(bool move = true) {
 }
 
 int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string &title) {
+    // 初始化控制台属性
     DWORD Mode;
     GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &Mode);
     Mode &= ~ENABLE_QUICK_EDIT_MODE;	//移除快速编辑模式
@@ -241,12 +242,13 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
     Mode |= ENABLE_MOUSE_INPUT;			//添加鼠标输入
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), Mode);
 
+    // 隐藏鼠标光标
     CONSOLE_CURSOR_INFO CursorInfo;
     GetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &CursorInfo);
     CursorInfo.bVisible = false;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &CursorInfo);
 
-    MOUSE_EVENT_RECORD mouseEvent;
+    MOUSE_EVENT_RECORD MouseEvent;
 
     // 控制台输出选择菜单
     echo(Utils::ToString("[MENU] 请选择", title, "："), FOREGROUND::WHITE);
@@ -254,20 +256,26 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
         echo(Utils::ToString("[", i, "] ", choices[i]), FOREGROUND::WHITE);
     }
 
-    bool isExit = false;
-    while (!isExit) {
-        mouseEvent = waitMouseEvent();
-        switch (mouseEvent.dwEventFlags) {
-            case mouseMove: {
+    bool flag = false;
+    while (!flag) {
+        INPUT_RECORD InputRecord;   // 输入事件
+        DWORD Event;                // 临时寄存
+        ReadConsoleInput(INPUT_HANDLE, &InputRecord, 1, &Event);                                  //将输入事件存入record
+        if (InputRecord.EventType == MOUSE_EVENT) {// 鼠标事件
+            MouseEvent = InputRecord.Event.MouseEvent;
+        }
+//        MouseEvent = waitMouseEvent();
+        switch (MouseEvent.dwEventFlags) {
+            case MOUSE_MOVED: {
                 SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, static_cast<SHORT>(8)});
-                std::cout << Utils::ToString("MousePosition | ", mouseEvent.dwMousePosition.Y, "/", mouseEvent.dwMousePosition.X);
-//                refresh(mouseEvent.dwMousePosition);
+                std::cout << Utils::ToString("MousePosition | ", MouseEvent.dwMousePosition.Y, "/", MouseEvent.dwMousePosition.X);
+//                refresh(MouseEvent.dwMousePosition);
                 break;
             }
-            case mouseClick: {
-                if (mouseEvent.dwButtonState and mouseEvent.dwButtonState != mouseWheel) {
-//                    isExit = implement(mouseEvent);
-                    isExit = true;
+            case MouseClick: {
+                if (MouseEvent.dwButtonState and MouseEvent.dwButtonState != MouseWheel) {
+//                    flag = implement(MouseEvent);
+                    flag = true;
                 }
                 break;
             }
