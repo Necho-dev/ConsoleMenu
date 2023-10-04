@@ -14,10 +14,13 @@
 #define OUTPUT_HANDLE GetStdHandle(STD_OUTPUT_HANDLE)
 
 enum MOUSE {
-    CLICK = 0x0,
-    MOVED = 0x1,
-    DBLCLICK = 0x2,
-    WHEEL = 0x4
+    CLICK = 0x0,            // 鼠标按键按下或松开时触发
+    MOVED = 0x1,            // 鼠标移动时触发
+    DBLCLICK = 0x2,         // 鼠标第二次按下时触发(此事件前定会触发CLICK事件)
+    WHEEL = 0x4,            // 鼠标滚轮滚动时触发
+    LEFT_BUTTON = 0x0001,   // 鼠标左键
+    RIGHT_BUTTON = 0x0002,  // 鼠标右键
+    MIDDLE_BUTTON = 0x0004, // 鼠标中键
 };
 
 enum class FOREGROUND {

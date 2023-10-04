@@ -233,7 +233,7 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
     // 获取窗口缓冲区信息
     HANDLE H = OUTPUT_HANDLE;
     CONSOLE_SCREEN_BUFFER_INFO BufferInfo;
-    GetConsoleScreenBufferInfo(H, &BufferInfo);
+    GetConsoleScreenBufferInfo(OUTPUT_HANDLE, &BufferInfo);
 
     // 初始化菜单信息
     int TotalChoices = static_cast<int>(choices.size());
@@ -242,10 +242,43 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
     WORD defaultStyle = getOriginAttr(H);
     WORD selectedStyle = static_cast<int>(FOREGROUND::BLACK) | static_cast<int>(BACKGROUND::WHITE);
 
+    enum Series {
+        NUMBER,
+        LETTER,
+    };
+    struct option {
+        int index;
+        Series series;
+        std::string title;
+        std::string value;
+        int length;
+        COORD position;
+
+        option() : index(0), series(NUMBER), title("NONE"), value("NONE"), length(0), position({0,0}) {}
+        bool operator== (const COORD &MousePosition) const {
+            if (position.Y == MousePosition.Y and position.X <= MousePosition.X and MousePosition.X < position.X + length) {
+                return true;
+            }
+            return false;
+        }
+        void calculateLength() {
+            length = static_cast<int>(Utils::ToString("[", index, "] ", title).length());
+        }
+    };
+
     // 控制台输出选择菜单
     echo(Utils::ToString("[MENU] 请选择", title, "："), FOREGROUND::WHITE);
     for (int i = 0; i < choices.size(); ++i) {
         echo(Utils::ToString("[", i, "] ", choices[i]), FOREGROUND::WHITE);
+    }
+    std::vector<option> options;
+    for (int i = 0; i < choices.size(); ++i) {
+        option opt;
+        opt.index = i;
+        opt.title = choices[i];
+        opt.position = {0, static_cast<SHORT>(StartPosition + i)};
+        opt.calculateLength();
+        options.push_back(opt);
     }
 
     // 设置初始选择
@@ -255,7 +288,7 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
     // 初始化光标位置
     int initPosition = StartPosition;
     int Position = initPosition;
-    while (!flag) {
+    while (true) {
         INPUT_RECORD InputRecord;       // 输入事件
         DWORD Event;                    // 临时寄存
         MOUSE_EVENT_RECORD MouseEvent;  // 鼠标事件
@@ -263,36 +296,56 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
         // 是否为鼠标事件
         if (InputRecord.EventType == MOUSE_EVENT) {
             MouseEvent = InputRecord.Event.MouseEvent;
-        }
-        switch (MouseEvent.dwEventFlags) {
-            case MOUSE::MOVED: {
-                SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, static_cast<SHORT>(8)});
-                std::cout << Utils::ToString("MousePosition | ", MouseEvent.dwMousePosition.Y, "/", MouseEvent.dwMousePosition.X);
-                Position = MouseEvent.dwMousePosition.Y;
-                break;
-            }
-            case MOUSE::CLICK: {
-                if (MouseEvent.dwButtonState and MouseEvent.dwButtonState != MOUSE::WHEEL) {
-                    flag = true;
+            // 鼠标事件类型
+            switch (MouseEvent.dwEventFlags) {
+                // 鼠标移动
+                case MOUSE::MOVED: {
+                    if (options[MouseEvent.dwMousePosition.Y - StartPosition] == MouseEvent.dwMousePosition) {
+                        Position = MouseEvent.dwMousePosition.Y;
+                    }
+                    break;
                 }
-                break;
+                // 鼠标单击
+                case MOUSE::CLICK: {
+                    switch (MouseEvent.dwButtonState) {
+                        case MOUSE::LEFT_BUTTON: {
+                            if (options[Position - StartPosition] == MouseEvent.dwMousePosition) {
+                                choice = Position - StartPosition;
+                                Position = StartPosition - 1;
+                                flag = true;
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
             }
         }
-        if (initPosition != Position && Position >= StartPosition && Position <= EndPosition) {
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, static_cast<SHORT>(9)});
-            std::cout << Utils::ToString("Init/Current | ", initPosition, "/", Position);
-            // 恢复当前选择行样式
+        // 若鼠标(行)位置发生变化
+        if (initPosition != Position) {
+            // 恢复以前选择行样式
             SetConsoleTextAttribute(H, defaultStyle);
             SetConsoleCursorPosition(H, {0, static_cast<SHORT>(initPosition)});
             std::cout << Utils::ToString("[", initPosition - StartPosition, "] ", choices[initPosition - StartPosition]);
+            if (flag) {
+                // 清除菜单
+                for (int i = 0; i < TotalChoices + 1; ++i) {
+                    SetConsoleCursorPosition(H, {0, static_cast<SHORT>(StartPosition + i)});
+                    std::cout << std::string(BufferInfo.dwSize.X, ' ');
+                }
+                SetConsoleCursorPosition(H, {0, static_cast<SHORT>(Position)});
+                echo(Utils::ToString("[MENU] 请选择", title, "：[", choice, "] ", choices[choice]), FOREGROUND::WHITE);
+                return choice;
+            };
             // 控制光标移动至指定位置
             SetConsoleCursorPosition(H, {0, static_cast<SHORT>(Position)});
             // 设置当前选择行样式
             SetConsoleTextAttribute(H, selectedStyle);
             std::cout << Utils::ToString("[", Position - StartPosition, "] ", choices[Position - StartPosition]);
-
+            // 记录当前选择行
             initPosition = Position;
         }
+
     }
 
     return 0;
