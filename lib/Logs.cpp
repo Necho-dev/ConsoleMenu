@@ -215,31 +215,13 @@ bool Logs::ProcessBar(int total, int wait) {
     return true;
 }
 
-COORD GetCursorPosition() {
-    CONSOLE_SCREEN_BUFFER_INFO temp;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_INPUT_HANDLE), &temp);
-    return temp.dwCursorPosition;
-}
-
-// 等待鼠标事件，事件包括鼠标移动、点击、滚轮滚动等一切由鼠标出发的事件
-MOUSE_EVENT_RECORD waitMouseEvent(bool move = true) {
-    INPUT_RECORD record; //输入事件
-    DWORD reg;           //临时寄存
-    while (true) {
-        Sleep(10);
-        ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), &record, 1, &reg);                                  //将输入事件存入record
-        if (record.EventType == MOUSE_EVENT and (move | (record.Event.MouseEvent.dwEventFlags != MOUSE_MOVED))) //是鼠标事件 && 移动事件与模式对应
-            return record.Event.MouseEvent;
-    }
-}
-
 int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string &title) {
     // 初始化控制台属性
     DWORD Mode;
     GetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), &Mode);
-    Mode &= ~ENABLE_QUICK_EDIT_MODE;	//移除快速编辑模式
-    Mode &= ~ENABLE_INSERT_MODE;		//移除插入模式
-    Mode |= ENABLE_MOUSE_INPUT;			//添加鼠标输入
+    Mode &= ~ENABLE_QUICK_EDIT_MODE;	// 禁用快速编辑模式
+    Mode &= ~ENABLE_INSERT_MODE;		// 禁用插入模式
+    Mode |= ENABLE_MOUSE_INPUT;			// 启用鼠标输入
     SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), Mode);
 
     // 隐藏鼠标光标
@@ -248,7 +230,17 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
     CursorInfo.bVisible = false;
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &CursorInfo);
 
-    MOUSE_EVENT_RECORD MouseEvent;
+    // 获取窗口缓冲区信息
+    HANDLE H = OUTPUT_HANDLE;
+    CONSOLE_SCREEN_BUFFER_INFO BufferInfo;
+    GetConsoleScreenBufferInfo(H, &BufferInfo);
+
+    // 初始化菜单信息
+    int TotalChoices = static_cast<int>(choices.size());
+    int StartPosition = BufferInfo.dwCursorPosition.Y + 1;
+    int EndPosition = StartPosition + TotalChoices - 1;
+    WORD defaultStyle = getOriginAttr(H);
+    WORD selectedStyle = static_cast<int>(FOREGROUND::BLACK) | static_cast<int>(BACKGROUND::WHITE);
 
     // 控制台输出选择菜单
     echo(Utils::ToString("[MENU] 请选择", title, "："), FOREGROUND::WHITE);
@@ -256,30 +248,50 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
         echo(Utils::ToString("[", i, "] ", choices[i]), FOREGROUND::WHITE);
     }
 
-    // TODO 鼠标选择菜单重构
+    // 设置初始选择
+    int choice = 0;
+
     bool flag = false;
+    // 初始化光标位置
+    int initPosition = StartPosition;
+    int Position = initPosition;
     while (!flag) {
-        INPUT_RECORD InputRecord;   // 输入事件
-        DWORD Event;                // 临时寄存
-        ReadConsoleInput(INPUT_HANDLE, &InputRecord, 1, &Event);                                  //将输入事件存入record
-        if (InputRecord.EventType == MOUSE_EVENT) {// 鼠标事件
+        INPUT_RECORD InputRecord;       // 输入事件
+        DWORD Event;                    // 临时寄存
+        MOUSE_EVENT_RECORD MouseEvent;  // 鼠标事件
+        ReadConsoleInput(INPUT_HANDLE, &InputRecord, 1, &Event);
+        // 是否为鼠标事件
+        if (InputRecord.EventType == MOUSE_EVENT) {
             MouseEvent = InputRecord.Event.MouseEvent;
         }
-//        MouseEvent = waitMouseEvent();
         switch (MouseEvent.dwEventFlags) {
-            case MOUSE_MOVED: {
+            case MOUSE::MOVED: {
                 SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, static_cast<SHORT>(8)});
                 std::cout << Utils::ToString("MousePosition | ", MouseEvent.dwMousePosition.Y, "/", MouseEvent.dwMousePosition.X);
-//                refresh(MouseEvent.dwMousePosition);
+                Position = MouseEvent.dwMousePosition.Y;
                 break;
             }
-            case MouseClick: {
-                if (MouseEvent.dwButtonState and MouseEvent.dwButtonState != MouseWheel) {
-//                    flag = implement(MouseEvent);
+            case MOUSE::CLICK: {
+                if (MouseEvent.dwButtonState and MouseEvent.dwButtonState != MOUSE::WHEEL) {
                     flag = true;
                 }
                 break;
             }
+        }
+        if (initPosition != Position && Position >= StartPosition && Position <= EndPosition) {
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), {0, static_cast<SHORT>(9)});
+            std::cout << Utils::ToString("Init/Current | ", initPosition, "/", Position);
+            // 恢复当前选择行样式
+            SetConsoleTextAttribute(H, defaultStyle);
+            SetConsoleCursorPosition(H, {0, static_cast<SHORT>(initPosition)});
+            std::cout << Utils::ToString("[", initPosition - StartPosition, "] ", choices[initPosition - StartPosition]);
+            // 控制光标移动至指定位置
+            SetConsoleCursorPosition(H, {0, static_cast<SHORT>(Position)});
+            // 设置当前选择行样式
+            SetConsoleTextAttribute(H, selectedStyle);
+            std::cout << Utils::ToString("[", Position - StartPosition, "] ", choices[Position - StartPosition]);
+
+            initPosition = Position;
         }
     }
 
