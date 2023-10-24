@@ -29,10 +29,9 @@ int main() {
 //    std::cout << "Hello, World!" << std::endl;
 
     // 控制台鼠标操作
-    int c1 = Logs::MouseMenu(imageChoices, "鼠标选择菜单");
-    int c2 = Logs::MouseMenu(imageChoices, "鼠标选择菜单");
-    std::cout << c1 << std::endl;
-    std::cout << c2 << std::endl;
+    for (int i = 0; i < 28; ++i) {
+        Logs::MouseMenu(imageChoices, "鼠标选择菜单");
+    }
     system("pause");
     return 0;
 }

@@ -308,12 +308,20 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
                 // 鼠标单击
                 case MOUSE::CLICK: {
                     switch (MouseEvent.dwButtonState) {
+                        // 鼠标左键
                         case MOUSE::LEFT_BUTTON: {
+                            // 判定鼠标位置是否在选项内
                             if (options[Position - StartPosition] == MouseEvent.dwMousePosition) {
+                                // 记录选项
                                 choice = Position - StartPosition;
                                 Position = StartPosition - 1;
                                 flag = true;
                             }
+                            break;
+                        }
+                        // 鼠标右键
+                        case MOUSE::WHEEL: {
+                            // 具体操作
                             break;
                         }
                     }
@@ -328,7 +336,7 @@ int Logs::MouseMenu(const std::vector <std::string> &choices, const std::string 
             SetConsoleCursorPosition(H, {0, static_cast<SHORT>(initPosition)});
             std::cout << Utils::ToString("[", initPosition - StartPosition, "] ", choices[initPosition - StartPosition]);
             if (flag) {
-                // 清除菜单
+                // 清空选项
                 for (int i = 0; i < TotalChoices + 1; ++i) {
                     SetConsoleCursorPosition(H, {0, static_cast<SHORT>(StartPosition + i)});
                     std::cout << std::string(BufferInfo.dwSize.X, ' ');

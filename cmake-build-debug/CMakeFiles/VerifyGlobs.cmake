@@ -6,6 +6,7 @@ cmake_policy(SET CMP0009 NEW)
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "D:/DevelopPros/CLionProjects/ConsoleMenu/lib/*.cpp")
 set(OLD_GLOB
   "D:/DevelopPros/CLionProjects/ConsoleMenu/lib/Logs.cpp"
+  "D:/DevelopPros/CLionProjects/ConsoleMenu/lib/Menu.cpp"
   "D:/DevelopPros/CLionProjects/ConsoleMenu/lib/Utils.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
@@ -17,6 +18,7 @@ endif()
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "D:/DevelopPros/CLionProjects/ConsoleMenu/lib/*.h")
 set(OLD_GLOB
   "D:/DevelopPros/CLionProjects/ConsoleMenu/lib/Logs.h"
+  "D:/DevelopPros/CLionProjects/ConsoleMenu/lib/Menu.h"
   "D:/DevelopPros/CLionProjects/ConsoleMenu/lib/Utils.h"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")

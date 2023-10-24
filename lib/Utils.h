@@ -1,5 +1,5 @@
-#ifndef CONSOLEACTION_UTILS_H
-#define CONSOLEACTION_UTILS_H
+#ifndef CONSOLEMENU_UTILS_H
+#define CONSOLEMENU_UTILS_H
 
 #include <iostream>
 #include <fstream>
@@ -104,4 +104,4 @@ namespace Utils {
 };
 
 
-#endif //CONSOLEACTION_UTILS_H
+#endif //CONSOLEMENU_UTILS_H

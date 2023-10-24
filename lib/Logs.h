@@ -1,15 +1,11 @@
-#ifndef CONSOLEACTION_LOGS_H
-#define CONSOLEACTION_LOGS_H
+#ifndef CONSOLEMENU_LOGS_H
+#define CONSOLEMENU_LOGS_H
 
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
 #include "Utils.h"
 #include <iomanip>
-#define MOUSE_CLICK 0x0					// 鼠标按键按下或松开时触发
-#define MOUSE_MOVE 0x1			// 鼠标移动时触发
-#define MouseDoubleClick DOUBLE_CLICK	// 鼠标第二次按下时触发，触发此事件前一定会触发 mouseClick 事件
-#define MouseWheel MOUSE_WHEELED		// 鼠标滚轮滚动时触发
 #define INPUT_HANDLE GetStdHandle(STD_INPUT_HANDLE)
 #define OUTPUT_HANDLE GetStdHandle(STD_OUTPUT_HANDLE)
 
@@ -83,4 +79,4 @@ public:
 };
 
 
-#endif //CONSOLEACTION_LOGS_H
+#endif //CONSOLEMENU_LOGS_H

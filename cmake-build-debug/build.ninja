@@ -61,6 +61,12 @@ build CMakeFiles/ConsoleMenu.dir/lib/Logs.cpp.obj: CXX_COMPILER__ConsoleMenu_uns
   OBJECT_DIR = CMakeFiles\ConsoleMenu.dir
   OBJECT_FILE_DIR = CMakeFiles\ConsoleMenu.dir\lib
 
+build CMakeFiles/ConsoleMenu.dir/lib/Menu.cpp.obj: CXX_COMPILER__ConsoleMenu_unscanned_Debug D$:/DevelopPros/CLionProjects/ConsoleMenu/lib/Menu.cpp || cmake_object_order_depends_target_ConsoleMenu
+  DEP_FILE = CMakeFiles\ConsoleMenu.dir\lib\Menu.cpp.obj.d
+  FLAGS = -g -std=gnu++11 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\ConsoleMenu.dir
+  OBJECT_FILE_DIR = CMakeFiles\ConsoleMenu.dir\lib
+
 build CMakeFiles/ConsoleMenu.dir/lib/Utils.cpp.obj: CXX_COMPILER__ConsoleMenu_unscanned_Debug D$:/DevelopPros/CLionProjects/ConsoleMenu/lib/Utils.cpp || cmake_object_order_depends_target_ConsoleMenu
   DEP_FILE = CMakeFiles\ConsoleMenu.dir\lib\Utils.cpp.obj.d
   FLAGS = -g -std=gnu++11 -fdiagnostics-color=always
@@ -75,7 +81,7 @@ build CMakeFiles/ConsoleMenu.dir/lib/Utils.cpp.obj: CXX_COMPILER__ConsoleMenu_un
 #############################################
 # Link the executable ConsoleMenu.exe
 
-build ConsoleMenu.exe: CXX_EXECUTABLE_LINKER__ConsoleMenu_Debug CMakeFiles/ConsoleMenu.dir/main.cpp.obj CMakeFiles/ConsoleMenu.dir/lib/Logs.cpp.obj CMakeFiles/ConsoleMenu.dir/lib/Utils.cpp.obj
+build ConsoleMenu.exe: CXX_EXECUTABLE_LINKER__ConsoleMenu_Debug CMakeFiles/ConsoleMenu.dir/main.cpp.obj CMakeFiles/ConsoleMenu.dir/lib/Logs.cpp.obj CMakeFiles/ConsoleMenu.dir/lib/Menu.cpp.obj CMakeFiles/ConsoleMenu.dir/lib/Utils.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\ConsoleMenu.dir
