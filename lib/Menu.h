@@ -80,6 +80,7 @@ class Menu {
 private:
     MODE Mode;                  // 交互模式
     WORD DefaultStyle;          // 默认样式
+    WORD CurrentStyle;          // 当前样式
     std::string Title;          // 菜单标题
     std::vector<ITEM> Items;    // 菜单选项
     std::string Tips;           // 菜单提示
@@ -111,6 +112,12 @@ private:
     // 设置菜单交互模式
     void SetMenuMode(MODE _mode);
 
+    // 获取控制台默认样式
+    void GetDefaultStyle();
+    // 设置控制台样式
+    void SetConsoleStyle(WORD _style);
+
+
 private:
     // 隐藏鼠标光标
     void HideCursor();
@@ -123,6 +130,7 @@ private:
 
     // 初始化菜单
     void InitMenu();
+    void InitMenu(int _position);
 
 public:
     // 构造函数

@@ -74,6 +74,10 @@ void Menu::RestoreConsoleMode() {
     DefaultMode = 0;
 }
 
-void Menu::InitMenu() {
-
+void Menu::InitMenu(int _position) {
+    //
+    int TotalItems = static_cast<int>(Items.size());
+    int StartPosition = _position + 1;
+    int EndPosition = StartPosition + TotalItems - 1;
+    
 }
