@@ -104,8 +104,7 @@
 			[
 				1,
 				2,
-				3,
-				7
+				3
 			]
 		}
 	],
@@ -149,11 +148,6 @@
 			"compileGroupIndex" : 0,
 			"path" : "lib/Utils.cpp",
 			"sourceGroupIndex" : 0
-		},
-		{
-			"backtrace" : 1,
-			"path" : "ConsoleGUI.h",
-			"sourceGroupIndex" : 1
 		}
 	],
 	"type" : "EXECUTABLE"

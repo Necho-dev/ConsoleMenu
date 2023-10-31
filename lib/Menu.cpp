@@ -40,6 +40,19 @@ void Menu::SetMenuMode(MODE _mode) {
     Mode = _mode;
 }
 
+void Menu::GetDefaultStyle() {
+    // 获取窗口缓冲区信息
+    CONSOLE_SCREEN_BUFFER_INFO BufferInfo;
+    GetConsoleScreenBufferInfo(OUTPUT_HANDLE, &BufferInfo);
+    // 获取初始定义的文本属性
+    DefaultStyle = BufferInfo.wAttributes;
+}
+
+void Menu::SetConsoleStyle(WORD _style) {
+    CurrentStyle = _style;
+    SetConsoleTextAttribute(OUTPUT_HANDLE, _style);
+}
+
 void Menu::HideCursor() {
     CONSOLE_CURSOR_INFO CursorInfo;
     GetConsoleCursorInfo(OUTPUT_HANDLE, &CursorInfo);
@@ -75,9 +88,30 @@ void Menu::RestoreConsoleMode() {
 }
 
 void Menu::InitMenu(int _position) {
-    //
+    // 初始化菜单位置
     int TotalItems = static_cast<int>(Items.size());
     int StartPosition = _position + 1;
     int EndPosition = StartPosition + TotalItems - 1;
-    
+
+    // 初始化菜单选项位置
+    for (int i = 0; i < TotalItems; ++i) {
+        Items[i].Index = i;
+        Items[i].Position = {0, static_cast<SHORT>(StartPosition + i)};
+        Items[i].Length = static_cast<SHORT>(4 + Items[i].Title.length());
+    }
 }
+
+void Menu::DrawMenu() {
+    // 绘制菜单标题
+    std::cout << "[MENU] 请选择" << Title << std::endl;
+    // 绘制菜单选项
+    for (ITEM &item : Items) {
+        std::cout << "[" << item.Index << "] " << item.Title << std::endl;
+    }
+    // 绘制菜单提示
+    if (!Tips.empty()) {
+        std::cout << "[TIPS] " << Tips << std::endl;
+    }
+}
+
+

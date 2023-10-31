@@ -1,5 +1,6 @@
 #ifndef CONSOLEMENU_MENU_H
 #define CONSOLEMENU_MENU_H
+#include <iostream>
 #include <windows.h>
 #include <vector>
 #include <string>
@@ -64,11 +65,13 @@ struct ITEM {
 
     // 重载赋值("=")运算符
     ITEM& operator= (const ITEM& item) {
-        Index = item.Index;
-        Length = item.Length;
-        Title = item.Title;
-        Value = item.Value;
-        Position = item.Position;
+        if (this != &item) {
+            Index = item.Index;
+            Title = item.Title;
+            Value = item.Value;
+            Position = item.Position;
+            Length = item.Length;
+        }
     }
 
     // 析构函数
@@ -129,8 +132,9 @@ private:
     void RestoreConsoleMode();
 
     // 初始化菜单
-    void InitMenu();
     void InitMenu(int _position);
+    // 绘制菜单
+    void DrawMenu();
 
 public:
     // 构造函数
